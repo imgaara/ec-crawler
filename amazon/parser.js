@@ -1,4 +1,6 @@
 const cheerio = require("cheerio")
+const mongoose = require('mongoose');
+
 // Crawler-per parser template
 
 // header method is optional
@@ -33,8 +35,8 @@ function parseProduct($, li) {
 		var div = $(this)
 
 		if (div.hasClass('a-spacing-top-micro')) {
-			// console.log(div.html())
-			if (div.html().indexOf('ベストセラー') !== -1) {
+			var divText = div.text()
+			if (divText.indexOf('ベストセラー') !== -1) {
 				isBestSeller = 1
 				debug("best seller " + id)
 			} else {
@@ -75,7 +77,8 @@ function parseProduct($, li) {
 			if (primeTag.length > 0) {
 				priceSymbolPrime = priceSymbolDiv.text()
 				pricePrime = priceDiv.text()
-				debug("priceSymbolPrime " + priceSymbolPrime + " pricePrime " + pricePrime)
+				debug("priceSymbolPrime " + priceSymbolPrime + " pricePrime " +
+					pricePrime)
 			} else {
 				priceSymbol = priceSymbolDiv.text()
 				price = priceDiv.text()
@@ -99,7 +102,7 @@ function parseProduct($, li) {
 	var product = {
 		'rank': rank,
 		'id': id,
-		'isBestSeller' : isBestSeller,
+		'isBestSeller': isBestSeller,
 		'detailPageTitle': detailPageTitle,
 		'detailPageLink': detailPageLink,
 		'representImgLink': representImgLink,
@@ -107,7 +110,7 @@ function parseProduct($, li) {
 		'price': price,
 		'price_prime': pricePrime,
 		'rate': rate,
-		'commentNum' : commentNum
+		'commentNum': commentNum
 	}
 
 	return product;
@@ -118,17 +121,17 @@ exports.body = function(url, body, response, crawler_handle) {
 	var m = null;
 	const $ = cheerio.load(body);
 
-
-	$('#resultsCol .s-result-item').each(function(i, el){
+	// console.log(body)
+	$('#resultsCol .s-result-item').each(function(i, el) {
 		var item = $(this)
 		var product = parseProduct($, item)
 		if (product === null) {
 			console.log("parse product failed");
 		} else {
 			console.log("product : " + JSON.stringify(product))
-			// if (product.representImgLink) {
-			// 	crawler_handle.addDown(product.representImgLink)
-			// }
+				// if (product.representImgLink) {
+				// 	crawler_handle.addDown(product.representImgLink)
+				// }
 		}
 	});
 
