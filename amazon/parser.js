@@ -1,5 +1,56 @@
 const cheerio = require("cheerio")
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/amazon_search', {
+	useMongoClient: true
+});
+
+mongoose.Promise = global.Promise;
+var Schema = mongoose.Schema;
+
+var SearchResultSchema = new Schema({
+	id: String,
+	rank: Number,
+	name: String,
+	isBestSeller: Number,
+	detailPageTitle: String,
+	detailPageLink: String,
+	representImgLink: String,
+	priceSymbol: String,
+	price: String,
+	pricePrime: String,
+	rate: String,
+	commentNum: Number,
+	keywords: String
+}, {
+	timestamps: true
+});
+
+SearchResultSchema.index({
+	keywords: 1,
+	createdOn: 1,
+	id: 1
+}, {
+	unique: true
+});
+
+SearchResultSchema.index({
+	id: 1,
+	keywords: 1,
+	createdOn: 1
+}, {
+	unique: true
+});
+
+var SearchResult = mongoose.model('SearchResult', SearchResultSchema);
+
+SearchResult.ensureIndexes(function(err) {
+	if (err) {
+		console.log("cannot create indexes " + err)
+	};
+});
+
+var keywords = 'baby'
 
 // Crawler-per parser template
 
@@ -99,19 +150,20 @@ function parseProduct($, li) {
 
 	priceSymbol = priceSymbol !== '' ? priceSymbol : priceSymbolPrime
 
-	var product = {
+	var product = new SearchResult({
 		'rank': rank,
 		'id': id,
 		'isBestSeller': isBestSeller,
 		'detailPageTitle': detailPageTitle,
 		'detailPageLink': detailPageLink,
 		'representImgLink': representImgLink,
-		'price_symbol': priceSymbol,
+		'priceSymbol': priceSymbol,
 		'price': price,
-		'price_prime': pricePrime,
+		'pricePrime': pricePrime,
 		'rate': rate,
-		'commentNum': commentNum
-	}
+		'commentNum': commentNum,
+		'keywords': keywords
+	})
 
 	return product;
 }
@@ -132,6 +184,13 @@ exports.body = function(url, body, response, crawler_handle) {
 				// if (product.representImgLink) {
 				// 	crawler_handle.addDown(product.representImgLink)
 				// }
+			product.save(function(err) {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log('saved! ' + product.id);
+				}
+			});
 		}
 	});
 
