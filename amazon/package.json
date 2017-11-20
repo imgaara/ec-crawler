@@ -1,0 +1,13 @@
+{
+  "name": "ec-crawler",
+  "version": "0.0.1",
+  "author": "zero",
+  "description": "search search",
+  "license": "MIT",
+  "dependencies": {
+    "mongoose": "latest"
+  },
+  "keywords": [
+    "crawler"
+  ]
+}
