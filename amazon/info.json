@@ -1,0 +1,14 @@
+{
+    "url": "https://www.amazon.co.jp/s/ref=nb_sb_noss?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&url=search-alias%3Daps&field-keywords=baby&rh=i%3Aaps%2Ck%3Ababy",
+    "outdir": ".",
+    "save": "url",
+    "types": "",
+    "limit": "5",
+    "parser": "",
+    "sleep": "200",
+    "timeout": "180000",
+    "proxy": "",
+    "maxsize": 0,
+    "minwidth": 0,
+    "minheight": 0
+}
